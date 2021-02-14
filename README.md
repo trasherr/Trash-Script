@@ -1,10 +1,11 @@
 # Trash-Script
 This a bash script that automates the process of embeding an payload in an original apk file.  It uses apktool and metasploit-framework to complete these tasks. You can also use to sign an apk or to install Akptool or metasploit-framework
 
+
 ## Usage
 
 ```
-cd Trash-Script/Trash-script/
+cd ./Trash-Script/
 bash trash.sh
 ```
 
