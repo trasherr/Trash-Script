@@ -94,14 +94,15 @@ final="$outname$add"
 apktool b -f original/ -o $final
 
 rm -r original payload payload.apk
+lo="$(find -type f -name '$final')"
 
 printf '''
-            Embeded APK file exported to Trash/$final
+            Embeded APK file exported to $lo
             
             Do you want to sign the apk file (you can not install the apk file without signing it first) [y/n] ?
             >'''
 read -r ysign
-echo $ysign
+
 if [[ "$ysign" == "y" ]]
 then 
 signa
